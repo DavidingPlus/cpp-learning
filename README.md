@@ -1,4 +1,4 @@
-# Cpp_LaoBai
+# LaoBai
 
 老白`cpp`课程的学习记录.
 
