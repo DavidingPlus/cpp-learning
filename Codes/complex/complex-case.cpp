@@ -15,11 +15,13 @@ public:
         imag += b.imag;
         return *this;
     }
+
     // 前缀自增
     complex& operator++() {  // 后缀自增的优先级高于前缀自增
         ++real;
         return *this;
     }
+
     // 后缀自增
     complex operator++(int) {  // 添加一个参数来区别前缀自增
         complex t{*this};
@@ -34,6 +36,7 @@ public:
     friend complex operator+(const complex& a, const complex& b);
 
     friend void print(const complex& c);
+
     // 流输出
     friend std::ostream& operator<<(std::ostream& os, const complex& c) {
         return os << std::format("{:.2f} + i{:.2f}\n", c.real, c.imag);
