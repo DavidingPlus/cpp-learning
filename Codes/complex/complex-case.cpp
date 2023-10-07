@@ -35,20 +35,22 @@ public:
 
     friend complex operator+(const complex& a, const complex& b);
 
-    friend void print(const complex& c);
-
     // 流输出
-    friend std::ostream& operator<<(std::ostream& os, const complex& c) {
-        return os << std::format("{:.2f} + i{:.2f}", c.real, c.imag);
-    };
+    friend std::ostream& operator<<(std::ostream& os, const complex& c);
+
+    friend void print(const complex& c);
 };
 
 complex operator+(const complex& a, const complex& b) {
     return complex{a.real + b.real, a.imag + b.imag};
 }
 
+std::ostream& operator<<(std::ostream& os, const complex& c) {
+    return os << std::format("{:.2f} + i{:.2f}", c.real, c.imag);
+};
+
 void print(const complex& c) {
-    std::cout << std::format("{:.2f} + i{:.2f}\n", c.real, c.imag);
+    std::cout << c;
 }
 
 int main() {
