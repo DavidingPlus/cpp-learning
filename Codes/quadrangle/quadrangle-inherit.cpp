@@ -41,7 +41,8 @@ public:
 
 class rectangle : public parallelogram {
 public:
-    rectangle(size_t w = 5, size_t h = 3, std::string n = "rectangle") : parallelogram(w, h, n) {}
+    rectangle(size_t w = 5, size_t h = 3, std::string n = "rectangle")
+        : parallelogram(w, h, n) {}
 
     ~rectangle() {}
 };
