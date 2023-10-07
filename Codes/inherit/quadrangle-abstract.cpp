@@ -1,7 +1,8 @@
-// quadrangle-virtual.cpp
+// quadrangle-abstract.cpp
 #include <iostream>
 #include <string>
 
+// 抽象类不能实例化，不能定义对象，但是可以定义指针和引用，因为不需要构造
 class quadrangle {
 protected:
     std::string name;
@@ -9,15 +10,14 @@ protected:
 public:
     quadrangle(std::string n = "quadrangle") : name(n) {}
 
+    virtual ~quadrangle() {}
+
 public:
     std::string whoami() const {
         return name;
     }
 
-    // 最早的父类变为虚函数，子类可以对这个成员进行覆写，父类指针访问这个接口会得到子类对应的实现，这个就是多态
-    virtual double area() const {
-        return -1.0;
-    }
+    virtual double area() const = 0;
 };
 
 class parallelogram : public quadrangle {
@@ -29,7 +29,7 @@ public:
         : quadrangle(n), width(w), height(h) {}
 
 public:
-    double area() const override {
+    double area() const {
         return double(width * height);
     }
 };
@@ -46,32 +46,27 @@ public:
         : parallelogram(w, h, n) {}
 
 public:
-    double area() const override {
+    double area() const {
         return parallelogram::area() / 2.0;
     }
 };
 
-// final也可以写在类上面
-class square final : public rectangle, public diamond {
+class square : public rectangle, public diamond {
 public:
     square(size_t w = 5, std::string n = "square") : parallelogram(w, w, n) {}
-
-public:
-    // 我们可以用final来终止虚函数的覆写，如果他还有子类，子类就不会进行覆写
-    double area() const final {
+    double area() const {
         return rectangle::area();
     }
 };
 
 int main() {
-    parallelogram p;
-    rectangle r;
-    diamond d;
-    square s;
-    quadrangle *quads[] = {&p, &r, &d, &s};
+    quadrangle *quads[] = {new parallelogram(), new rectangle(), new diamond(), new square()};
 
     for (auto q : quads)
         std::cout << "area of " << q->whoami() << ": " << q->area() << std::endl;
+
+    for (auto q : quads)
+        delete q;
 
     return 0;
 }
