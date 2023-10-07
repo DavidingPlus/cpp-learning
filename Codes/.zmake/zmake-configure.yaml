@@ -1,0 +1,29 @@
+active: g++
+options:
+  cxxflag: "-g -Wall -std=c++23"
+  asan: "-fsanitize=address"
+  tsan: "-fsanitize=thread"
+  charset: "-finput-charset=utf-8 -fexec-charset=gbk"
+  module: "-fmodules-ts"
+compiler:
+  g++:
+    cmd: g++
+    options: asan
+    clean: rm
+    target: a.out
+  mingw:
+    cmd: g++
+    options: charset
+    clean: del
+    target: a.exe
+  clang:
+    cmd: clang++
+    options: asan
+    clean: rm
+    target: a.out
+feature-applied:
+  tsan: 
+    - ch10
+  module:
+    - ch1/helloworld.cpp
+    - ch3/case
