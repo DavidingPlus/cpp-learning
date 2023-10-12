@@ -1,11 +1,10 @@
-//sum.cpp
-
-#include <iostream>
+// sum.cpp
 #include <cstdarg>
+#include <iostream>
 
 template <typename T>
 // auto sum(int count, T v0, ...) { // C style
-auto sum(int count, T v0...) { // C++ style
+auto sum(int count, T v0...) {  // C++ style
     va_list args;
 
     va_start(args, v0);
