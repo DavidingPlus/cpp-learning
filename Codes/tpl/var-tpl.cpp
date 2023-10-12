@@ -1,5 +1,4 @@
-//var-tpl.cpp
-
+// var-tpl.cpp
 #include <iostream>
 
 size_t fibo_r(size_t n) {

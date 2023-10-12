@@ -1,5 +1,4 @@
-//fun-tpl-abbr.cpp
-
+// fun-tpl-abbr.cpp
 #include <iostream>
 
 template <typename T>

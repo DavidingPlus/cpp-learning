@@ -1,5 +1,4 @@
-//perfect-forward.cpp
-
+// perfect-forward.cpp
 #include <iostream>
 
 void f(int&) { std::cout << "f(int&)" << std::endl; }
@@ -16,13 +15,13 @@ int main() {
     int&& rrx = std::move(x);
 
     std::cout << "forward by value:\n";
-    forward_v(x); // lvalue
-    forward_v(1); // prvalue
-    forward_v(rrx); // lvalue!!!
+    forward_v(x);    // lvalue
+    forward_v(1);    // prvalue
+    forward_v(rrx);  // lvalue!!!
 
     std::cout << "forward by ref:\n";
     forward_r(x);
-    // forward_r(1); 
+    // forward_r(1);
     forward_r(rrx);
 
     return 0;
