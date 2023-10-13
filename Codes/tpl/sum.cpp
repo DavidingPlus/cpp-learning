@@ -26,15 +26,16 @@ auto sum2(Args... args) {
     return (0 + ... + args);
 }
 
-// 方法3，出问题了
-template <typename value_type, typename... Args>
-auto sum3(value_type val, Args... args) {
-    return val + sum2(args...);
+// 写一个处理函数递归出口的重载版本，注意，不是偏特化版本！函数模板没有偏特化，偏特化是类模板的特性！
+template <typename value_type>
+auto sum3(value_type val) {
+    return val;
 }
 
-// 特化版本
-auto sum3() {
-    return 0;
+// 方法3
+template <typename value_type, typename... Args>
+auto sum3(value_type val, Args... args) {
+    return val + sum3(args...);
 }
 
 int main() {
