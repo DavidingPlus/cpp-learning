@@ -11,7 +11,7 @@ auto abs(value_type val) {
 // 为指针类型写一个特化版本，而且是偏特化
 // 函数模板的偏特化不被允许，我们一般对类做偏特化，我们只是看一下偏特化的写法
 template <typename value_type>
-auto abs<value_type*>(value_type* ptr) {
+auto abs<value_type*>(value_type* ptr) {  // error
     return ptr;
 }
 
