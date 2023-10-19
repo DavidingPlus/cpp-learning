@@ -7,14 +7,16 @@
 #include <initializer_list>
 #include <iostream>
 
-using value_type = int;
+// 类型隔离，很方便的转化为类模板
+// using value_type = int;
 
+template <typename value_t>
 class dlist {
 public:
     /**
      * @brief 定义一些类型
      */
-    using value_type = ::value_type;
+    using value_type = value_t;
     using pointer = value_type*;
     using reference = value_type&;
     using constref = const value_type&;
