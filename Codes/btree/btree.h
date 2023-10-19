@@ -7,19 +7,20 @@
 /**
  * @brief 定义数据类型
  */
-struct value_type {
-    char tag;
-};
+// struct value_type {
+//     char tag;
+// };
 
 /**
  * @brief 二叉树的类
  */
+template <typename value_t>
 class btree {
 public:
     /**
      * @brief 定义一些类型
      */
-    using value_type = ::value_type;
+    using value_type = value_t;
     using pointer = value_type *;
     using reference = value_type &;
     using constref = const value_type &;

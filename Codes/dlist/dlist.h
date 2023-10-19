@@ -108,6 +108,14 @@ private:
         value_type data;
         struct node* next = nullptr;
         struct node* prior = nullptr;
+
+        // TODO
+        // 这里理解，如何去掉从push_back里面经过node的拷贝构造，省掉这一次不必要的赋值
+        node() = default;
+
+        // 在位构造
+        template <typename... types>
+        node(types&&... args) : data(args...) {}
     };
 
     /**
@@ -176,6 +184,17 @@ public:
     }
 
     /**
+     * @brief 在位插入
+     * @tparam types
+     * @param  args
+     */
+    template <typename... types>
+    void emplace_back(types&&... args) {
+        auto p = new node{args...};
+        _linkbefore(tail, p);
+    }
+
+    /**
      * @brief 在指定位置插入一个结点，注意这里使用了异常捕获
      * @param pos，需要插入的位置，从第一个结点(head的后驱结点)为0开始计数
      * @param v，需要插入的结点的data值
@@ -199,14 +218,37 @@ public:
     }
 
     /**
+     * @brief insert的优化版，去掉不必要的复制，叫emplace
+     */
+    template <typename... types>
+    void emplace(size_t pos, types... args) try {
+        auto p = head->next;
+        // 这里有两种情况退出，一种是pos值没超停在正确的位置；一种是pos值超了，pos给的值不对
+        for (size_t i = 0; i < pos && p != nullptr; ++i)
+            p = p->next;
+
+        // 处理异常
+        if (!p)
+            throw(std::out_of_range(std::format("emplace postion {} was out of range", pos)));
+        // 没有异常则正常插入
+        auto q = new node{args...};  // 改成在位构造
+        _linkbefore(p, q);
+        ++length;
+    } catch (std::out_of_range& e) {  // 捕获异常
+        std::cout << e.what() << std::endl;
+        exit(-1);
+    }
+
+    /**
      * @brief 定义了回调函数的类型，返回值是void，参数是引用类型，可以打印也可以修改内容
      */
-    using callback_t = void(reference);
+    // using callback_t = void(reference);
 
     /**
      * @brief 链表的遍历方法
-     * @param visit，回调函数callback_t
+     * @param visit，之前是回调函数callback_t，现在改造为模板
      */
+    template <typename callback_t>
     void traverse(callback_t visit) {
         for (auto p = head->next; p != tail; p = p->next)
             visit(p->data);
