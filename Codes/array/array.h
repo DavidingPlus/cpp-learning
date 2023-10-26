@@ -206,6 +206,22 @@ private:
      * @brief 模板参数给出大小之后，不需要用指针代表了，直接使用原生数组
      */
     value_type data[capacity];
+
+public:
+    /**
+     * @brief 定义迭代器，这里是原生数组，所以我们直接使用指针
+     */
+    using iterator = pointer;
+
+    /**
+     * @brief 迭代器的begin()
+     */
+    iterator begin() { return data; }
+
+    /**
+     * @brief 迭代器的end()
+     */
+    iterator end() { return data + size(); }
 };
 
 #endif

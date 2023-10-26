@@ -26,6 +26,13 @@ void print_l(dlist<value_t>& l) {
     std::cout << std::endl;
 }
 
+template <typename iterator>
+void print_l(iterator first, iterator last) {
+    for (auto iter = first; iter != last; ++iter)
+        std::cout << *iter << ' ';
+    std::cout << std::endl;
+}
+
 namespace Test {
 
 void test1() {
@@ -57,11 +64,29 @@ void test2() {
 void test3() {
     // 测试复杂类型
     dlist<foo> l3;
-    for (int i = 1; i < 5; ++i) {
+    for (int i = 1; i <= 10; ++i) {
         // l3.push_back(foo{i, i * 1.23});
         l3.emplace_back(i, i * 1.23);
     }
     print_l(l3);
+}
+
+// 测试迭代器
+void test4() {
+    dlist<foo> l;
+    for (int i = 1; i <= 10; ++i) {
+        l.emplace_back(i, i * 1.23);
+    }
+
+    for (auto& e : l)
+        std::cout << e << ' ';
+    std::cout << std::endl;
+
+    print_l(l.begin(), l.end());
+
+    print_l(l.begin() + 3, l.end() - 2);
+
+    print_l(l.rbegin() + 3, l.rend() - 2);
 }
 
 }  // namespace Test
@@ -69,7 +94,8 @@ void test3() {
 int main() {
     // Test::test1();
     // Test::test2();
-    Test::test3();
+    // Test::test3();
+    Test::test4();
 
     return 0;
 }

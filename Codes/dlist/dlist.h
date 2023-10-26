@@ -253,6 +253,312 @@ public:
         for (auto p = head->next; p != tail; p = p->next)
             visit(p->data);
     }
+
+public:
+    /**
+     * @brief 定义容器类型，作类型屏蔽
+     */
+    using container_type = dlist;
+
+    /**
+     * @brief 定义指向数据的指针，作类型屏蔽
+     */
+    using dataptr_type = nodeptr_t;
+
+    /**
+     * @brief 定义相差的步数的类型，就是指针之间的距离
+     */
+    using difference_type = ptrdiff_t;
+
+public:  // 迭代器----------------------------------------
+    /**
+     * @brief 作一个超前声明，说明是友元
+     */
+    friend class iterator;
+
+    /**
+     * @brief 定义迭代器类
+     */
+    class iterator {
+    public:
+        /**
+         * @brief 定义一些类型
+         */
+        using value_type = container_type::value_type;
+        using pointer = container_type::pointer;
+        using reference = container_type::reference;
+        using difference_type = container_type::difference_type;
+
+    private:
+        using dataptr_type = container_type::dataptr_type;
+
+        /**
+         * @brief 定义迭代器的成员，是一根指针，指向类的数据成员
+         */
+        dataptr_type p;
+
+    public:
+        /**
+         * @brief 构造函数
+         */
+        iterator(dataptr_type _p = nullptr) : p(_p) {}
+
+        /**
+         * @brief 重载!=运算符
+         * @param  other，另一个迭代器
+         * @return true
+         * @return false
+         */
+        // constexpr，如果编译器评估是常量表达式，则在编译期得出结果，可以提高效率
+        constexpr bool operator!=(const iterator& other) const {
+            return this->p != other.p;
+        }
+
+        /**
+         * @brief 重载前缀++运算符
+         * @return iterator&
+         */
+        iterator& operator++() {
+            // p = p->next;
+            // return *this;
+            return advance();
+        }
+
+        /**
+         * @brief 重载前缀--运算符
+         * @return iterator&
+         */
+        iterator& operator--() {
+            return advance(-1);
+        }
+
+        /**
+         * @brief 重载后缀++运算符
+         * @return iterator
+         */
+        iterator operator++(int) {
+            auto t = p;  // 如果用拷贝构造的话，我们没写，可能造成浅拷贝
+            // p = p->next;
+            advance();
+            return iterator(t);
+        }
+
+        /**
+         * @brief 重载后缀--运算符
+         * @return iterator
+         */
+        iterator operator--(int) {
+            auto t = p;
+            advance(-1);
+            return iterator(t);
+        }
+
+        /**
+         * @brief 重载*号运算符
+         * @return reference
+         */
+        reference operator*() {
+            return p->data;
+        }
+
+        /**
+         * @brief 让当前的迭代器向前或者向后移动n位
+         * @param  n，默认值为1
+         */
+        iterator& advance(difference_type n = 1) {
+            // TODO
+            // 我们暂时不管指针越界，这个后面自己完成
+            if (n >= 0) {
+                for (auto i = 0; i < n; ++i)
+                    p = p->next;
+            } else {
+                for (auto i = 0; i < -n; ++i)
+                    p = p->prior;
+            }
+
+            return *this;
+        }
+
+        /**
+         * @brief 重载 + 运算符
+         * @param  n
+         * @return iterator
+         */
+        iterator operator+(difference_type n) {
+            return iterator(p).advance(n);  // 为了保持左右操作数不变，给一个临时对象
+        }
+
+        /**
+         * @brief 重载 - 运算符
+         * @param  n
+         * @return iterator
+         */
+        iterator operator-(difference_type n) {
+            return iterator(p).advance(-n);
+        }
+    };
+
+public:
+    /**
+     * @brief 容器的begin()方法
+     * @return iterator
+     */
+    constexpr iterator begin() const {
+        return iterator(head->next);
+    }
+
+    /**
+     * @brief 容器的end()方法
+     * @return iterator
+     */
+    constexpr iterator end() const {
+        return iterator(tail);
+    }
+
+public:  // 逆向迭代器----------------------------------------
+    /**
+     * @brief 作一个超前声明，说明是友元
+     */
+    friend class reverse_iterator;
+
+    /**
+     * @brief 定义逆向迭代器类
+     */
+    class reverse_iterator {
+    public:
+        /**
+         * @brief 定义一些类型
+         */
+        using value_type = container_type::value_type;
+        using pointer = container_type::pointer;
+        using reference = container_type::reference;
+        using difference_type = container_type::difference_type;
+
+    private:
+        using dataptr_type = container_type::dataptr_type;
+
+        /**
+         * @brief 定义迭代器的成员，是一根指针，指向类的数据成员
+         */
+        dataptr_type p;
+
+    public:
+        /**
+         * @brief 构造函数
+         */
+        reverse_iterator(dataptr_type _p = nullptr) : p(_p) {}
+
+        /**
+         * @brief 重载!=运算符
+         * @param  other，另一个迭代器
+         * @return true
+         * @return false
+         */
+        // constexpr，如果编译器评估是常量表达式，则在编译期得出结果，可以提高效率
+        constexpr bool operator!=(const reverse_iterator& other) const {
+            return this->p != other.p;
+        }
+
+        /**
+         * @brief 重载前缀++运算符
+         * @return reverse_iterator&
+         */
+        reverse_iterator& operator++() {
+            // p = p->next;
+            // return *this;
+            return advance();
+        }
+
+        /**
+         * @brief 重载前缀--运算符
+         * @return reverse_iterator&
+         */
+        reverse_iterator& operator--() {
+            return advance(-1);
+        }
+
+        /**
+         * @brief 重载后缀++运算符
+         * @return reverse_iterator
+         */
+        reverse_iterator operator++(int) {
+            auto t = p;  // 如果用拷贝构造的话，我们没写，可能造成浅拷贝
+            // p = p->next;
+            advance();
+            return reverse_iterator(t);
+        }
+
+        /**
+         * @brief 重载后缀--运算符
+         * @return reverse_iterator
+         */
+        reverse_iterator operator--(int) {
+            auto t = p;
+            advance(-1);
+            return reverse_iterator(t);
+        }
+
+        /**
+         * @brief 重载*号运算符
+         * @return reference
+         */
+        reference operator*() {
+            return p->data;
+        }
+
+        /**
+         * @brief 让当前的迭代器向前或者向后移动n位
+         * @param  n，默认值为1
+         */
+        reverse_iterator& advance(difference_type n = 1) {
+            // TODO
+            // 我们暂时不管指针越界，这个后面自己完成
+            if (n >= 0) {
+                for (auto i = 0; i < n; ++i)
+                    p = p->prior;
+            } else {
+                for (auto i = 0; i < -n; ++i)
+                    p = p->next;
+            }
+
+            return *this;
+        }
+
+        /**
+         * @brief 重载 + 运算符
+         * @param  n
+         * @return reverse_iterator
+         */
+        reverse_iterator operator+(difference_type n) {
+            return reverse_iterator(p).advance(n);  // 为了保持左右操作数不变，给一个临时对象
+        }
+
+        /**
+         * @brief 重载 - 运算符
+         * @param  n
+         * @return reverse_iterator
+         */
+        reverse_iterator operator-(difference_type n) {
+            return reverse_iterator(p).advance(-n);
+        }
+    };
+
+public:
+    /**
+     * @brief 容器的rbegin()方法
+     * @return reverse_iterator
+     */
+    constexpr reverse_iterator rbegin() const {
+        return reverse_iterator(tail->prior);
+    }
+
+    /**
+     * @brief 容器的rend()方法
+     * @return reverse_iterator
+     */
+    constexpr reverse_iterator rend() const {
+        return reverse_iterator(head);
+    }
 };
 
 #endif
