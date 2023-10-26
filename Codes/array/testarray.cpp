@@ -41,6 +41,14 @@ void test2() {
     print_l(l2);
 }
 
+// 测试迭代器
+void test3() {
+    array<int, 6> l{1, 2, 3, 4, 5, 6};
+    for (auto& e : l)  // for_each要求如果不是原生容器(例如原生数组，初始化列表)，必须具有迭代器，因为他本质是通过迭代器遍历的
+        std::cout << e << ' ';
+    std::cout << std::endl;
+}
+
 }  // namespace Test
 
 int main() {
@@ -49,6 +57,10 @@ int main() {
     std::cout << std::endl;
 
     Test::test2();
+
+    std::cout << std::endl;
+
+    Test::test3();
 
     return 0;
 }
