@@ -37,9 +37,9 @@ void test(const char *range_name, iterator first, iterator last, gt_fn&& gtf, T 
     print_range(first, last);
 
     print_any(
-        // "count=", count(first, last, val), 
-        // ", count_if=", count_if(first, last - 2, std::forward<gt_fn>(gtf)),
-        // ", sum=", accumulate(first + 3, last - 3), 
+        "count=", count(first, last, val), 
+        ", count_if=", count_if(first, last - 2, std::forward<gt_fn>(gtf)),
+        ", sum=", accumulate(first + 3, last - 3), 
         "\n\n"
     );
 }
@@ -47,26 +47,31 @@ void test(const char *range_name, iterator first, iterator last, gt_fn&& gtf, T 
 int main() {
     // 用dlist测试
     dlist<int> l{1, 8, 5, 3, 6, 5, 4, 7, 2, 9, 5};
-    test("dlist<int>", l.begin(), l.end(), [](auto v) { return v > 3; }, 5);
+    test("dlist<int>: forward", l.begin(), l.end(), [](auto v) { return v > 3; }, 5);
 
     dlist<std::string> ls;
     for (auto v : l) ls.push_back(std::format("{}s", v));
-    test("dlist<std::string>", ls.begin(), ls.end(), [](auto const& v) { return v > "3s"; }, "5s");
+    test("dlist<std::string>: const", ls.cbegin(), ls.cend(), [](auto const& v) { return v > "3s"; }, "5s");
+    // *ls.cbegin() = "2s"; // error
 
     dlist<foo> lf;
     for (auto v : l) lf.emplace_back(v, v * 0.1);
-    test("dlist<foo>", lf.begin(), lf.end(), gt<foo>(foo{3, 0.3}), foo{5, 0.5});
+    test("dlist<foo>: reverse", lf.rbegin(), lf.rend(), gt<foo>(foo{3, 0.3}), foo{5, 0.5});
 
-    // // 用原生数组测试
-    // constexpr size_t n = 11;
-    // float a[n];
-    // for (int i = 0; auto v : l) a[i++] = v / 10.0f;
-    // test("float a[n]", a, a + n, gt<float>(0.3f), 0.5f);
+    // 用原生数组测试
+    constexpr size_t n = 11;
+    float a[n];
+    for (int i = 0; auto v : l) a[i++] = v / 10.0f;
+    test("float a[n]: pointer", a, a + n, gt<float>(0.3f), 0.5f);
 
-    // // 用array测试
-    // array<long, n> b;
-    // for (int i = 0; auto v : l) b[i++] = long(v) * 10l;
-    // test("array<long, n>", b.begin(), b.end(), gt<long>(30l), 50l);
+    // 用array测试
+    array<long, n> b;
+    for (int i = 0; auto v : l) b[i++] = long(v) * 10l;
+    test("array<long, n>: fake iterator", b.begin(), b.end(), gt<long>(30l), 50l);
+
+    // 测试范围算法
+    print_range(lf);
+    print_range(b);
 
     return 0;
 }
