@@ -1,18 +1,17 @@
 #include <iostream>
 using namespace std;
-#include <unordered_set>
 #include <functional>
 #include <string>
+#include <unordered_set>
+
 #include "27_HashFunction.h"
 
-class Customer
-{
+class Customer {
 public:
     Customer();
     Customer(string _fname, string _lname, long _no) : fname(_fname), lname(_lname), no(_no) {}
 
-    bool operator==(const Customer &c) const
-    {
+    bool operator==(const Customer &c) const {
         return this->fname == c.fname && this->lname == c.lname && this->no == c.no;
     }
 
@@ -22,11 +21,9 @@ public:
     long no;
 };
 
-class CustomerHash
-{
+class CustomerHash {
 public:
-    size_t operator()(const Customer &c) const
-    {
+    size_t operator()(const Customer &c) const {
         return HashFunction().hash_val(c.fname, c.lname, c.no);
     }
 };
@@ -38,8 +35,7 @@ public:
 //     return HashFunction().hash_val(c.fname, c.lname, c.no);
 // }
 
-int main()
-{
+int main() {
     // using function_pointer = size_t (*)(const Customer &); // 定义函数指针
     // unordered_set<Customer, function_pointer> custset2;    // 第一个参数篮子大小
 
@@ -55,7 +51,7 @@ int main()
     custset.insert(Customer("Shally", "Hwung", 7L));
     // 这个篮子个数会自己调整，一般都是质数
     // 当元素个数增加到等于篮子个数的时候重构，保证篮子个数大于元素个数!!!
-    cout << "custset current bucket_count: " << custset.bucket_count() << endl; // 13
+    cout << "custset current bucket_count: " << custset.bucket_count() << endl;  // 13
 
     for (int i = 0; i < custset.bucket_count(); ++i)
         cout << "bucket #" << i << " has " << custset.bucket_size(i) << " elements." << endl;
