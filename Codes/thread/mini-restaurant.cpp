@@ -89,10 +89,12 @@ order_t cooked;
 // 互斥量，分别用于订单锁、做好的菜品锁、铃
 mutex order_m, cooked_m, bell_m;
 
-// 信号量
+// 条件变量
 condition_variable bell;  // 菜品做好后主厨按的铃
 
 // 原子量：主厨做好的菜品数（正），服务员上菜的数量（负）
+// 一旦说明是原子量，在上面的任意操作都不能被打断
+// 使用volatile关键字来确保在多线程并发访问时,每个线程都使用主内存中的最新值(及时更新)
 atomic_int volatile count_cooked{0}, count_served{0};
 
 // ---------------------------------------------------------------------------
@@ -149,12 +151,34 @@ struct chef final : public restaurant_job {
      * @param who 厨房员工
      */
     void do_job(restaurant_staff const& who) const override {
-        // TODO
+        while (count_cooked < total) {
+            // order竞争对象，进行加锁
+            order_m.lock();
 
-        // Linux和Powershell终端都支持彩色显式
-        // println(who.color, ++count_cooked, ": Chef ", who.name, " is cooking '", c, "' for table ", t, ende);
-        // this_thread::sleep_for(milliseconds(100)); // 睡眠一段时间，模拟做菜的耗时
-        // println(grey, "\tCourse '", c, "' for table ", t, " is done", ende);
+            // 结构化绑定，wtf
+            auto [t, c] = order.front();
+            order.pop_front();
+
+            // 记得解锁
+            order_m.unlock();
+
+            // Linux和Powershell终端都支持彩色显式
+            println(who.color, ++count_cooked, ": Chef ", who.name, " is cooking '", c, "' for table ", t, ende);
+            this_thread::sleep_for(milliseconds(100));  // 睡眠一段时间，模拟做菜的耗时
+
+            // 放到cooked列表上，竞争对象
+            cooked_m.lock();
+
+            cooked.emplace_back(t, c);
+            println(grey, "\tCourse '", c, "' for table ", t, " is done", ende);
+
+            cooked_m.unlock();
+
+            // 敲铃
+            bell.notify_one();
+        }
+
+        bell.notify_all();  // 一般在结束的时候会调用这个，让所有的服务生都来工作，防止可能会有服务生一直阻塞...
     }
 };
 
@@ -171,11 +195,32 @@ struct server final : public restaurant_job {
      * @param who 厨房员工
      */
     void do_job(restaurant_staff const& who) const override {
-        // TODO
-        count_served = _total;  // 编码补全后请删除这行
+        while (1) {
+            if (count_served > _total) {
+                // wait需要一个临时的唯一锁，这和条件变量的wait一样，需要一个pthread_mutex_t
+                unique_lock<mutex> bl(bell_m);
+                bell.wait(bl);
+                bl.unlock();  // 记得把bell_m锁释放了...
 
-        // println(who.color, --count_served, ": Server ", who.name, " is dishing up '", c, "' for table ", t, ende);
-        // this_thread::sleep_for(milliseconds(80)); // 睡眠，模拟上菜耗时
+                // 从已经做好的cooked里面获取菜品
+                cooked_m.lock();
+
+                // 如果列表为空则表示被别人取走了，需要重新来
+                if (cooked.empty()) {
+                    cooked_m.unlock();
+                    continue;
+                }
+
+                auto [t, c] = cooked.front();
+                cooked.pop_front();
+
+                cooked_m.unlock();
+
+                println(who.color, --count_served, ": Server ", who.name, " is dishing up '", c, "' for table ", t, ende);
+                this_thread::sleep_for(milliseconds(80));  // 睡眠，模拟上菜耗时
+            } else
+                break;
+        }
     }
 };
 
@@ -189,6 +234,7 @@ int main() {
     // 定义4位厨房员工
     restaurant_staff z("Zhang", Cf, green), l("Li", Cf, amber), w("Wang", Sv, magenta), x("Xiao", Sv, turquoise);
     // 创建并启动线程。线程模板是functor
+    // jthread，j的意思是joinable，会自动调用join，回收资源
     jthread srv1(w), srv2(x), chef1(z), chef2(l);
 
     // 模拟阻塞主线程
