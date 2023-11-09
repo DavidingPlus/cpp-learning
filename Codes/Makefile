@@ -14,5 +14,6 @@ all:
 	@$(cxx) $(sources) $(options) $(libs)
 
 .PHONY: clean
+
 clean:
 	@$(clean) $(target)
