@@ -24,6 +24,8 @@ compiler:
 feature-applied:
   tsan: 
     - ch10
+    - lb/thread
+    - mine/thread
   module:
     - ch1/helloworld.cpp
     - ch3/case
