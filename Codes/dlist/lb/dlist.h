@@ -11,10 +11,10 @@
 
 #pragma once
 
-#include <iostream>
-#include <initializer_list>
-#include <format>
 #include <exception>
+#include <format>
+#include <initializer_list>
+#include <iostream>
 
 #include "../iterator/iterator.h"
 
@@ -31,9 +31,9 @@ public:
      *
      */
     using value_type = value_t;
-    using pointer = value_type*;
-    using reference = value_type&;
-    using constref = value_type const &; // 值的常量左值引用类型
+    using pointer = value_type *;
+    using reference = value_type &;
+    using constref = value_type const &;  // 值的常量左值引用类型
 
 private:
     /**
@@ -41,9 +41,9 @@ private:
      *
      */
     struct node {
-        value_type data;    // 数据域
-        node *next = nullptr;  // 后向指针域
-        node *prior = nullptr; // 前向指针域
+        value_type data;        // 数据域
+        node *next = nullptr;   // 后向指针域
+        node *prior = nullptr;  // 前向指针域
 
         // 默认构造函数
         node() = default;
@@ -54,15 +54,15 @@ private:
          * @tparam types 变长类型参数包
          * @param args 变长参数包
          */
-        template <typename ...types>
+        template <typename... types>
         node(types &&...args) : data(args...) {}
     };
 
     // 定义指向结点的指针类型。
-    using nodeptr_t = node*;
+    using nodeptr_t = node *;
 
-    nodeptr_t head = nullptr, tail = nullptr; //指向头尾结点的指针
-    size_t length = 0; //链表长度
+    nodeptr_t head = nullptr, tail = nullptr;  // 指向头尾结点的指针
+    size_t length = 0;                         // 链表长度
 
     /**
      * @brief 初始化。1.生成头尾结点，分别用head和tail指针指向；2.将头尾结点链在一起。
@@ -105,7 +105,6 @@ private:
     }
 
 protected:
-
 public:
     // 默认构造函数
     dlist() noexcept {
@@ -164,7 +163,7 @@ public:
      * @param v 待插入的值（的常量引用）
      */
     void push_back(constref v) {
-        auto p = new node{v}; // 生成结点并初始化
+        auto p = new node{v};  // 生成结点并初始化
         _linkbefore(tail, p);
     }
 
@@ -174,9 +173,9 @@ public:
      * @tparam types 变长类型参数包
      * @param args 变长参数包，直接传递给node的构造函数，而此构造函数又直接将参数转发给内部对象的构造函数
      */
-    template <typename ...types>
+    template <typename... types>
     void emplace_back(types &&...args) {
-        auto p = new node{args...}; // 生成结点并初始化
+        auto p = new node{args...};  // 生成结点并初始化
         _linkbefore(tail, p);
     }
 
@@ -188,7 +187,8 @@ public:
      */
     void insert(size_t pos, constref v) try {
         auto p = head->next;
-        for (auto i = 0uz; i < pos and p != nullptr; ++i, p = p->next);
+        for (auto i = 0uz; i < pos and p != nullptr; ++i, p = p->next)
+            ;
         if (p == nullptr)
             throw std::out_of_range(std::format("inserting postion {} was out of range", pos));
 
@@ -206,10 +206,11 @@ public:
      * @param pos 插入位置。从0开始计数
      * @param args 变长参数包，直接传递给node的构造函数，而此构造函数又直接将参数转发给内部对象的构造函数
      */
-    template <typename ...types>
-    void emplace(size_t pos, types ...args) try {
+    template <typename... types>
+    void emplace(size_t pos, types... args) try {
         auto p = head->next;
-        for (auto i = 0uz; i < pos and p != nullptr; ++i, p = p->next);
+        for (auto i = 0uz; i < pos and p != nullptr; ++i, p = p->next)
+            ;
         if (p == nullptr)
             throw std::out_of_range(std::format("inserting postion {} was out of range", pos));
 
@@ -241,9 +242,9 @@ public:
     }
 
     // 为迭代器定义类型
-    using container_type = dlist; // 容器类型
-    using dataptr_type = nodeptr_t; // 数据指针类型
-    using difference_type = ptrdiff_t; // 指针距离类型
+    using container_type = dlist;       // 容器类型
+    using dataptr_type = nodeptr_t;     // 数据指针类型
+    using difference_type = ptrdiff_t;  // 指针距离类型
 
 protected:
     /**
@@ -264,7 +265,7 @@ protected:
     protected:
         using dataptr_type = container_type::dataptr_type;
 
-        dataptr_type p; // 被包装的指针，指向容器的内部存储结构
+        dataptr_type p;  // 被包装的指针，指向容器的内部存储结构
 
         // 内部函数，用于指针的前移或后移
         virtual void _next(dataptr_type &p) = 0;
@@ -311,16 +312,20 @@ protected:
          * @return constexpr difference_type 两个迭代器之间的距离。可能为负值
          */
         constexpr difference_type distance(iterator_type const &itr) const try {
-            iterator_type tmp{p}; // 生成一个临时迭代器。因为distance方式是const方法，所以应该这么做。
+            iterator_type tmp{p};  // 生成一个临时迭代器。因为distance方式是const方法，所以应该这么做。
             difference_type n = 0;
 
             // 先向后找，看看是否能遇到itr.p
-            for (; tmp.p != itr.p and not tmp._is_next_exceed(tmp.p); tmp._next(tmp.p), ++n);
-            if (tmp.p == itr.p) return n;
+            for (; tmp.p != itr.p and not tmp._is_next_exceed(tmp.p); tmp._next(tmp.p), ++n)
+                ;
+            if (tmp.p == itr.p)
+                return n;
 
             // 再向后找
-            for (n = 0, tmp.p = p; tmp.p != itr.p and not tmp._is_prev_exceed(tmp.p); tmp._prev(tmp.p), --n);
-            if (tmp.p == itr.p) return n;
+            for (n = 0, tmp.p = p; tmp.p != itr.p and not tmp._is_prev_exceed(tmp.p); tmp._prev(tmp.p), --n)
+                ;
+            if (tmp.p == itr.p)
+                return n;
 
             // 未找到，抛出异常
             throw std::out_of_range("distance: cannot evaluate the distance");
@@ -389,12 +394,12 @@ protected:
     };
 
 public:
-    friend class iterator; // 为了效率，迭代器是容器类的友元
+    friend class iterator;  // 为了效率，迭代器是容器类的友元
     /**
      * @brief 定义前向迭代器。迭代器是容器的内部类（模板）
      *
      */
-    class iterator : private base_list_iterator<iterator> { // 私有继承
+    class iterator : private base_list_iterator<iterator> {  // 私有继承
         using parent = base_list_iterator<iterator>;
         friend parent;
 
@@ -434,7 +439,7 @@ public:
         }
 
     public:
-        using parent::parent; // 构造函数继承
+        using parent::parent;  // 构造函数继承
 
         using parent::advance;
         using parent::distance;
@@ -536,8 +541,8 @@ public:
     public:
         // 从基类引入必要的类型
         using value_type = parent::value_type const;
-        using pointer = value_type*;
-        using reference = value_type&;
+        using pointer = value_type *;
+        using reference = value_type &;
         using difference_type = parent::difference_type;
         using iterator_category = parent::iterator_category;
 

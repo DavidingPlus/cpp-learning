@@ -1,7 +1,7 @@
-//testdlist.cpp
+// testdlist.cpp
 
-#include <iostream>
 #include <format>
+#include <iostream>
 
 #include "dlist.h"
 
@@ -21,10 +21,11 @@ std::ostream& operator<<(std::ostream& os, foo const& f) {
 
 template <typename iterator>
 void print_l(iterator first, iterator last) {
-    if (first.distance(last) < 0) return;
+    if (first.distance(last) < 0)
+        return;
 
-    for (auto itr = first; itr != last; ++itr) { 
-        std::cout << *itr << ' '; 
+    for (auto itr = first; itr != last; ++itr) {
+        std::cout << *itr << ' ';
     };
     std::cout << std::endl;
 }
