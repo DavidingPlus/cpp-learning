@@ -23,9 +23,6 @@ compiler:
     target: a.out
 feature-applied:
   tsan: 
-    - ch10
-    - lb/thread
-    - mine/thread
+    - thread
   module:
     - ch1/helloworld.cpp
-    - ch3/case
