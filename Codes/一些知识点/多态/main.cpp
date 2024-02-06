@@ -3,25 +3,25 @@ using namespace std;
 
 class Animal {
 public:
-    virtual void bite() = 0;
+    virtual void speak() = 0;
 };
 
 class Dog : public Animal {
 public:
-    void bite() { cout << "Dog bite" << endl; }
+    void speak() { cout << "Dog speak." << endl; }
 };
 
 class Cat : public Animal {
 public:
-    void bite() { cout << "Cat bite" << endl; }
+    void speak() { cout << "Cat speak." << endl; }
 };
 
 int main() {
     Animal *dog = new Dog();
-    dog->bite();
+    dog->speak();
 
     Animal *cat = new Cat();
-    cat->bite();
+    cat->speak();
 
     return 0;
 }
