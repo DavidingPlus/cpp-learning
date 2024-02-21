@@ -11,15 +11,17 @@ void test1() {
 
     // 带捕获的lambda
     int num = 1;
-    std::cout << "num: " << num << '\n';
+    int num2 = 1;
+    std::cout << "num2: " << num << '\n';
 
-    std::function<int(int, int)> f2 = [&num](int a, int b) {
-        num = 2;
+    std::function<int(int, int)> f2 = [=, &num2](int a, int b) {
+        num2 = 2;
+        std::cout << "num: " << num << '\n';
         return a + b;
     };
 
     std::cout << f2(1, 2) << '\n';
-    std::cout << "num: " << num << '\n';
+    std::cout << "num2: " << num2 << '\n';
 }
 
 int add(int a, int b) { return a + b; }
