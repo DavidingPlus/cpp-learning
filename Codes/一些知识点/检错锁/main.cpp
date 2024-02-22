@@ -1,31 +1,29 @@
 #include <iostream>
 #include <pthread.h>
 #include <unistd.h>
+#include <exception>
 
 int num = 100;
 pthread_mutex_t mutex;
-
-void test1();
-void *job(void *);
-
-int main()
-{
-    test1();
-
-    return 0;
-}
 
 void *job(void *)
 {
     // 加锁
     int res = pthread_mutex_lock(&mutex);
-    std::cout << "res: " << res << '\n';
+    std::cout << "lock res: " << res << '\n';
 
     // 重复加锁
+    // trylock
+    res = pthread_mutex_trylock(&mutex);
+    std::cout << "trylock res: " << res << '\n';
+
+    // lock
     res = pthread_mutex_lock(&mutex);
-    std::cout << "res: " << res << '\n';
+    std::cout << "lock res: " << res << '\n';
     if (EDEADLK == res)
-        std::cout << "double locking!" << '\n';
+    {
+        throw std::runtime_error("double locking.");
+    }
 
     for (int i = 0; i < 5; ++i)
     {
@@ -39,17 +37,17 @@ void *job(void *)
     return nullptr;
 }
 
-void test1()
+int main()
 {
     // 初始化互斥锁
-    // pthread_mutex_init(&mutex, nullptr);
+    pthread_mutex_init(&mutex, nullptr);
 
     // 检错锁，检测同一个线程多次请求同一把锁，其他行为和普通锁相同
-    pthread_mutexattr_t attr;
-    pthread_mutexattr_init(&attr);
-    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
-    pthread_mutex_init(&mutex, &attr);
-    pthread_mutexattr_destroy(&attr);
+    // pthread_mutexattr_t attr;
+    // pthread_mutexattr_init(&attr);
+    // pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
+    // pthread_mutex_init(&mutex, &attr);
+    // pthread_mutexattr_destroy(&attr);
 
     // 创建子线程
     pthread_t tid;
@@ -59,4 +57,6 @@ void test1()
     pthread_join(tid, nullptr);
 
     pthread_mutex_destroy(&mutex);
+
+    return 0;
 }
