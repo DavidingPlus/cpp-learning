@@ -37,8 +37,8 @@ void *job(void *)
     std::cout << res << '\n';
 
     // 加入读锁之后不释放的情况下加入写锁，看会发生什么
-    res = pthread_rwlock_wrlock(&rwlock); // 阻塞
-    std::cout << res << '\n';
+    // res = pthread_rwlock_wrlock(&rwlock); // 阻塞
+    // std::cout << res << '\n';
 
     // 释放锁
     // 思考一下为什么加锁有两个，解锁却只有一个？
