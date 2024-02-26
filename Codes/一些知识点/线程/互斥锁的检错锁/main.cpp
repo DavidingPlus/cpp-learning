@@ -10,16 +10,16 @@ void *job(void *)
 {
     // 加锁
     int res = pthread_mutex_lock(&mutex);
-    std::cout << "lock res: " << res << '\n';
+    std::cout << "lock() res: " << res << '\n';
 
     // 重复加锁
-    // trylock
+    // trylock()
     res = pthread_mutex_trylock(&mutex);
-    std::cout << "trylock res: " << res << '\n';
+    std::cout << "trylock() res: " << res << '\n';
 
     // lock
     res = pthread_mutex_lock(&mutex);
-    std::cout << "lock res: " << res << '\n';
+    std::cout << "lock() res: " << res << '\n';
     if (EDEADLK == res)
     {
         throw std::runtime_error("double locking.");
@@ -39,7 +39,7 @@ void *job(void *)
 
 int main()
 {
-    // 初始化互斥锁
+    // 初始化互斥锁，使用普通锁
     pthread_mutex_init(&mutex, nullptr);
 
     // 检错锁，检测同一个线程多次请求同一把锁，其他行为和普通锁相同
@@ -56,6 +56,7 @@ int main()
     // 主线程回收资源
     pthread_join(tid, nullptr);
 
+    // 释放互斥锁
     pthread_mutex_destroy(&mutex);
 
     return 0;
