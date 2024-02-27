@@ -27,7 +27,5 @@ int main()
 
     t.join();
 
-    s1->releaseInstance();
-
     return 0;
 }
