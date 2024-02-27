@@ -20,5 +20,5 @@ void Singleton::releaseInstance()
 
 void Singleton::print()
 {
-    std::cout << "address: " << m_instance << '\n';
+    std::cout << "m_instance address: " << m_instance << '\n';
 }

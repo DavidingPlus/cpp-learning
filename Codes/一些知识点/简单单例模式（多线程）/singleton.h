@@ -17,7 +17,7 @@ public:
 
 protected:
     Singleton() = default;
-    virtual ~Singleton() = default;
+    virtual ~Singleton() { releaseInstance(); }
 
     Singleton(const Singleton &) = delete;
     Singleton &operator=(const Singleton &) = delete;
