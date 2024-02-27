@@ -40,6 +40,8 @@ void *job(void *)
     // res = pthread_rwlock_wrlock(&rwlock); // 阻塞
     // std::cout << res << '\n';
 
+    // note: 当然先加排他的写锁，再加共享的读锁是`ok`的，因为排他写锁首先能写，那必然读就隐含在里面了；只是不能持有共享读锁的情况下再加排他写锁
+
     // 释放锁
     // 思考一下为什么加锁有两个，解锁却只有一个？
     pthread_rwlock_unlock(&rwlock);
