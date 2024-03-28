@@ -1,0 +1,17 @@
+# !/usr/bin/bash
+
+# 生成系统头文件的模块
+# 启用的C++标准必须和应用构建启用的标准一样
+
+echo "Generating system modules..."
+
+rm -rf gcm.cache/usr
+
+for header in `cat tool/syshdrs.txt`
+do
+    echo "--- $header"
+    g++ -std=c++23 -fmodules-ts -xc++-system-header $header &
+    wait $!
+done
+
+echo "Done. Please use 'tree gcm.cache' to check these modules."

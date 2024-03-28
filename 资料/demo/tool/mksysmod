@@ -1,0 +1,6 @@
+# !/usr/bin/bash
+
+for header in $@
+do
+    g++ -std=c++23 -fmodules-ts -xc++-system-header $header
+done
