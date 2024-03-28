@@ -1,0 +1,11 @@
+gcc conc_tcp_srv_echo.c -o server.o
+gcc conc_tcp_cli_echo.c -o client.o
+
+gcc server.c -o server.o
+gcc client.c -o client.o
+
+./server.o 127.0.0.60 51148 510
+./client.o 127.0.0.60 51148 934
+./client.o 127.0.0.60 51148 131
+
+tar cvf conc_tcp_cs_echo.tar conc_tcp_srv_echo.c conc_tcp_cli_echo.c
