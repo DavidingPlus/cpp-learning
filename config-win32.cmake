@@ -31,3 +31,6 @@ else ()
     message ("-- CCache not found.")
 
 endif ()
+
+
+option (BUILD_SHARED_LIBS "Build using shared libraries" OFF)

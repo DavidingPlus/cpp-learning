@@ -16,7 +16,9 @@ else ()
 
 endif ()
 
+# TODO 为了兼顾 Windows，后续引入 __declspec() 机制导出动态库
+# 目前 Linux 下使用动态库，Windows 下使用静态库
 aux_source_directory ("${PROJECT_SOURCE_DIR}/src" PROJECT_SOURCE_FILES)
-add_library (lzxthreadsorter SHARED ${PROJECT_SOURCE_FILES})
+add_library (lzxthreadsorter ${PROJECT_SOURCE_FILES})
 
 add_subdirectory ("snippet")
