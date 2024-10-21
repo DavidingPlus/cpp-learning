@@ -17,7 +17,7 @@ endforeach()
 # Run add_subdirectory() for each
 
 foreach (SUB_DIR ${SUB_DIRS})
-    message ("-- [LarkSDK] Building snippet: ${SUB_DIR}")
+    message ("-- Building snippet: ${SUB_DIR}")
     add_subdirectory (${SUB_DIR})
 
 endforeach()
