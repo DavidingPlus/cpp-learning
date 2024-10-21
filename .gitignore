@@ -2,3 +2,4 @@
 _test.cpp
 a.out
 .buildme
+build/
