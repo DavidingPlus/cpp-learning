@@ -1,5 +1,6 @@
 add_subdirectory (AsyncTest)
 add_subdirectory (AtomicTest)
+add_subdirectory (CusProDemo)
 add_subdirectory (FutureTest)
 add_subdirectory (MutexTest)
 add_subdirectory (PromiseTest)
