@@ -1,3 +1,5 @@
 add_subdirectory (AtomicTest)
 add_subdirectory (MutexTest)
 add_subdirectory (ThreadTest)
+add_subdirectory (AsyncTest)
+add_subdirectory (FutureTest)
