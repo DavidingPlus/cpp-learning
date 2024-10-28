@@ -11,7 +11,7 @@ int main()
     // std::launch::deferred	0x2（2）	                    在调用 future::get、future::wait 时同步启动
     // std::launch::async | std::launch::defereed	0x3（3）	同步或异步，根据操作系统而定
 
-    std::async(
+    auto f = std::async(
         std::launch::async,
 
         [](const std::string &message)
