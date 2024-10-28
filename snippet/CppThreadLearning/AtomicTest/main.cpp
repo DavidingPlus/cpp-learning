@@ -5,7 +5,7 @@
 
 // 将临界资源定义为线程级别的原子操作的数据。
 // 即使是多线程，也要像同步进行一样同步操作 atomic 对象，从而省去了 mutex 上锁、解锁的时间消耗。故执行的更快。
-std::atomic<int> n = 0;
+std::atomic<int> n(0);
 
 
 void count()
